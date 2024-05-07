@@ -3,17 +3,17 @@ version: '3.8'
 
 services:
   web:
-    build: .
+    build: ./server
     depends_on:
      - db
     command: /app/run_server.sh
     expose:
       - 8000
     env_file:
-      - ./.env
+      - ./server/.env
 
   db:
-    image: postgres
+    image: postgres:latest
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     environment:
