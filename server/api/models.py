@@ -20,6 +20,7 @@ class Auction(models.Model):
     description = models.TextField()
     image = models.ImageField(upload_to="/auction/images/")
     goal = models.IntegerField(default=0)
+    collected = models.IntegerField(default=0)
     min_price = models.IntegerField(default=1)
     is_open = models.BooleanField(default=False)
     owner = models.ForeignKey(User, on_delete=models.PROTECT)
