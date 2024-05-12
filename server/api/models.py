@@ -1,5 +1,5 @@
 from django.db import models
-from ..eth_user.models import User
+from eth_user.models import User
 
 
 # Create your models here.
@@ -7,7 +7,7 @@ from ..eth_user.models import User
 class MetadataNFT(models.Model):
     name = models.CharField(max_length=24)
     description = models.TextField()
-    image = models.ImageField(upload_to="")
+    image = models.ImageField(upload_to="nft/metadata")
     # attributes
     value = models.IntegerField()
 
@@ -18,7 +18,8 @@ class MetadataNFT(models.Model):
 class Auction(models.Model):
     name = models.CharField(max_length=124)
     description = models.TextField()
-    image = models.ImageField(upload_to="/auction/images/")
+    image = models.ImageField(upload_to="auction/images")
+    wallet = models.CharField(max_length=120)
     goal = models.IntegerField(default=0)
     collected = models.IntegerField(default=0)
     min_price = models.IntegerField(default=1)
