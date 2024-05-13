@@ -3,5 +3,5 @@ from .views import ListAPIViewMetaDataNFT, ListAPIViewAuction
 
 urlpatterns = [
     path('v1/', ListAPIViewMetaDataNFT.as_view(), name="metadata"),
-    path('v1/aution/', ListAPIViewAuction.as_view(), name="list-auction"),
+    path('v1/auction/', ListAPIViewAuction.as_view(), name="list-auction"),
 ]
