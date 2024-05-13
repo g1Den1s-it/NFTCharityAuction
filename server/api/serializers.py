@@ -11,6 +11,6 @@ class MetadataNFTSerialzier(serializers.ModelSerializer):
 class AuctionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Auction
-        fields = ["name", "description", "image",
+        fields = ["id", "name", "description", "image",
                   "goal", "collected", "min_price",
                   "owner", "date"]
