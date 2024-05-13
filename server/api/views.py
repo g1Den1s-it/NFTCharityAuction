@@ -1,6 +1,6 @@
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
-from rest_framework.generics import ListAPIView
+from rest_framework.generics import ListAPIView, RetrieveAPIView
 from .models import MetadataNFT, Auction
 from .serializers import MetadataNFTSerialzier, AuctionSerializer
 
@@ -21,3 +21,15 @@ class ListAPIViewAuction(ListAPIView):
     queryset = Auction.objects.filter(is_open=True)
     serializer_class = AuctionSerializer
 
+class RetrieveAPIViewAuction(RetrieveAPIView):
+    """get data of detail of auction"""
+    queryset = Auction.objects.filter(is_open=True)
+    serializer_class = AuctionSerializer
+
+    def get(self, request, *args, **kwargs):
+        id = kwargs.get('id', None)
+
+        auction = self.get_queryset().filter(id=id)
+        serializer = AuctionSerializer(auction).data
+
+        return Response(serializer)
