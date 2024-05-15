@@ -21,15 +21,18 @@ class ListAPIViewAuction(ListAPIView):
     queryset = Auction.objects.filter(is_open=True)
     serializer_class = AuctionSerializer
 
+
 class RetrieveAPIViewAuction(RetrieveAPIView):
     """get data of detail of auction"""
     queryset = Auction.objects.filter(is_open=True)
     serializer_class = AuctionSerializer
 
     def get(self, request, *args, **kwargs):
-        id = kwargs.get('id', None)
+        pk = kwargs.get('id', 1)
+        self.queryset = self.get_queryset().get(id=pk)
 
-        auction = self.get_queryset().filter(id=id)
-        serializer = AuctionSerializer(auction).data
+        if self.queryset.is_open == True:
+            serializer = AuctionSerializer(self.get_queryset(), context={'request': request}).data
+            return Response(serializer)
 
-        return Response(serializer)
+        return Response({})
