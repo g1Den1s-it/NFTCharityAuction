@@ -1,12 +1,18 @@
+from base64 import b64decode
+
 from web3.auto import w3
 import string
 import random
+import jwt
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
+from rest_framework import status
 from eth_account.messages import encode_defunct
 from rest_framework_simplejwt.tokens import RefreshToken
 from .validators import LoginValidator
+from .serializers import UserProfileSerializer
 from .models import User, Captcha
 
 def create_captcha_string():
@@ -19,22 +25,12 @@ class CreateAPIViewEthUser(APIView):
 
     def post(self, request, *args, **kwargs):
         public_key = request.data.get("public_key")
-        user = None
 
-        try:
-            user = User.objects.get(public_key=public_key)
-            print("second: ", user.public_key)
-        except:
-            User.objects.create(public_key=public_key).save()
-
-
-
-        Captcha.objects.filter(user=user).delete()
+        user, created_user = User.objects.get_or_create(public_key=public_key)
 
         ran_string = create_captcha_string()
 
-        captcha = Captcha(captcha=ran_string,user=user)
-        captcha.save()
+        captcha, created_captcha = Captcha.objects.update_or_create(user=user, defaults={'captcha': ran_string})
 
         return Response({'captcha': captcha.captcha})
 
@@ -67,3 +63,27 @@ class LoginView(APIView):
                 return Response({'message': "User doesn't have captcha"})
             return Response({'message': "Not valid public key or signature"})
         return Response({'message': "public key and signature required"})
+
+
+class ProfileUserApiView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        user = get_object_or_404(User, id=request.user.id)
+        serializer = UserProfileSerializer(user)
+
+        return Response(serializer.data)
+
+
+    def put(self, request, *args, **kwargs):
+        user_id = request.user.id
+
+        user = get_object_or_404(User, id=user_id)
+        serializer = UserProfileSerializer(user, data=request.data)
+
+        if serializer.is_valid():
+            serializer.save()
+
+            return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

@@ -7,6 +7,13 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ("public_key", )
 
 
+class UserProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ("username", "public_key", "profile_image", "email", "first_name", "last_name")
+
+
+
 class Captcha(serializers.ModelSerializer):
     class Meta:
         models = ("captcha", )
