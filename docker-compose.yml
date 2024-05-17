@@ -3,7 +3,9 @@ version: '3.8'
 
 services:
   web:
-    build: ./server
+    build:
+      context: ./server
+      dockerfile: Dockerfile.django
     depends_on:
      - db
     command: /app/run_server.sh
@@ -29,6 +31,7 @@ services:
     build: ./nginx
     depends_on:
       - web
+      - redis
     ports:
       - "80:80"
     volumes:
@@ -43,6 +46,21 @@ services:
       - ./network/.env
     volumes:
       - token_data:/app/network/build/contract
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+  celery:
+    build:
+      context: ./server
+      dockerfile: Dockerfile.celery
+    command: celery -A NFTCharityAuction worker --loglevel=info
+    depends_on:
+      - web
+      - redis
+      - network
+    env_file:
+      - ./server/.env
 
 volumes:
   postgres_data:

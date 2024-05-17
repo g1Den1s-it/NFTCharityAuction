@@ -15,6 +15,17 @@ class MetadataNFT(models.Model):
         return self.name
 
 
+class NetworkTransaction(models.Model):
+    hash_block = models.CharField(max_length=96)
+    from_address = models.CharField(max_length=96)
+    to_address = models.CharField(max_length=96)
+    value = models.CharField(max_length=42)
+    gas_price = models.BigIntegerField()
+
+    def __str__(self):
+        return self.hash_block[:7] + "..." + self.hash_block[-5:]
+
+
 class Auction(models.Model):
     name = models.CharField(max_length=124)
     description = models.TextField()
