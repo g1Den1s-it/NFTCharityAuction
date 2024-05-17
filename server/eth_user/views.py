@@ -81,11 +81,11 @@ class ProfileUserApiView(APIView):
         try:
             user = User.objects.get(id=user_id)
 
-            user.update(**request.data)
-            user.refresh_from_db()
+            serializer = UserProfileSerializer(data=request.data, instance=user)
 
-            serializer = UserProfileSerializer(user)
+            if serializer.is_valid():
+                serializer.save()
 
-            return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
-        except:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'error': e}, status=status.HTTP_400_BAD_REQUEST)
