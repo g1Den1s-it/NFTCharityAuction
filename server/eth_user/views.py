@@ -15,6 +15,7 @@ from .validators import LoginValidator
 from .serializers import UserProfileSerializer
 from .models import User, Captcha
 
+
 def create_captcha_string():
     letters = string.ascii_lowercase + string.digits
     cryptogen = random.SystemRandom()
@@ -74,16 +75,17 @@ class ProfileUserApiView(APIView):
 
         return Response(serializer.data)
 
-
     def put(self, request, *args, **kwargs):
         user_id = request.user.id
 
-        user = get_object_or_404(User, id=user_id)
-        serializer = UserProfileSerializer(user, data=request.data)
+        try:
+            user = User.objects.get(id=user_id)
 
-        if serializer.is_valid():
-            serializer.save()
+            user.update(**request.data)
+            user.refresh_from_db()
+
+            serializer = UserProfileSerializer(user)
 
             return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
-
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
