@@ -12,7 +12,7 @@ class AuctionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Auction
         fields = ["id", "name", "description", "image",
-                  "goal", "collected", "min_price",
+                  "goal", "collected", "wallet", "min_price",
                   "owner", "date"]
 
     def to_representation(self, instance):
