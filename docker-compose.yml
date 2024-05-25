@@ -45,7 +45,7 @@ services:
     env_file:
       - ./network/.env
     volumes:
-      - token_data:/app/network/build/contract
+      - token_data:/app/build/contracts/
   redis:
     image: redis:latest
     ports:
