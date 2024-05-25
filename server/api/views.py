@@ -1,3 +1,4 @@
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
@@ -6,18 +7,15 @@ from rest_framework.generics import ListAPIView, RetrieveAPIView, GenericAPIView
 from web3 import Web3
 from eth_user.models import User
 from .models import MetadataNFT, Auction
-from .serializers import MetadataNFTSerialzier, AuctionSerializer
+from .serializers import MetadataNFTSerializer, AuctionSerializer
 
 
 # Create your views here.
-class ListAPIViewMetaDataNFT(ListAPIView):
-    """view get metadate of current nft-token"""
-    serializer_class = MetadataNFTSerialzier
-
-    def get(self, request, *args, **kwargs):
-        queryset = get_object_or_404(MetadataNFT, pk=1)
-        serializer = MetadataNFTSerialzier(queryset).data
-        return Response(serializer)
+class MetaDataNFTRetrieveAPIView(RetrieveAPIView):
+    """view get metadata of current nft-token"""
+    serializer_class = MetadataNFTSerializer
+    queryset = MetadataNFT.objects.all()
+    lookup_field = "id"
 
 
 class ListAPIViewAuction(ListAPIView):
@@ -35,9 +33,11 @@ class RetrieveAPIViewAuction(RetrieveAPIView):
         pk = kwargs.get('id', 1)
         self.queryset = self.get_queryset().get(id=pk)
 
-        if self.queryset.is_open == True:
-            serializer = AuctionSerializer(self.get_queryset(), context={'request': request}).data
-            return Response(serializer)
+        if self.queryset.is_open:
+            serializer = AuctionSerializer(
+                self.get_queryset(),
+                context={'request': request})
+            return Response(serializer.data)
 
         return Response({})
 

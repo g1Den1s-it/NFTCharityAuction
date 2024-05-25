@@ -2,10 +2,20 @@ from rest_framework import serializers
 from .models import MetadataNFT, Auction
 
 
-class MetadataNFTSerialzier(serializers.ModelSerializer):
+class MetadataNFTSerializer(serializers.ModelSerializer):
     class Meta:
         model = MetadataNFT
         fields = ['name', 'description', 'image']
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        request = self.context.get('request')
+
+        if request:
+            if 'image' in representation and representation['image']:
+                representation['image'] = request.build_absolute_uri(representation['image'])
+
+        return representation
 
 
 class AuctionSerializer(serializers.ModelSerializer):
