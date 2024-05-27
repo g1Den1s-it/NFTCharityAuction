@@ -1,9 +1,10 @@
 import json
 import asyncio
+import random
 from NFTCharityAuction.celery import app
 from web3 import Web3
 from websockets import connect
-from api.models import NetworkTransaction
+from api.models import NetworkTransaction, RewardListAuction
 
 
 @app.task
@@ -38,3 +39,36 @@ async def get_event():
                 print("Transaction save success")
             except Exception as e:
                 print("error", e)
+
+
+@app.task
+def get_reward_from_list(auction):
+    reward_list = RewardListAuction.objects.filter(auction=auction)
+
+    data_user_tickets = {}
+    sum_tickets = 0
+
+    for reward in reward_list:
+        if data_user_tickets[reward.user]:
+            data_user_tickets[reward.user]["tickets"] += reward.ticket
+            sum_tickets += reward.ticket
+        else:
+            data_user_tickets[reward.user] = {'address': reward.user.public_key,
+                                              'tickets': reward}
+            sum_tickets += reward.ticket
+
+    cumulative_chance = []
+    cumulative_sum = 0.0
+
+    for user, data in data_user_tickets.items():
+        cumulative_sum += data["tickets"] / sum_tickets
+        cumulative_chance.append((cumulative_sum, user))
+
+    r = random.random()
+
+    for cumulative, user in cumulative_chance:
+        if r < cumulative:
+            return data_user_tickets[user]
+
+    return None
+

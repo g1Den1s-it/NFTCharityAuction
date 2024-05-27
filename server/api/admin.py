@@ -43,7 +43,8 @@ class MetadataNFTAdmin(admin.ModelAdmin):
         dev_account = web3.eth.account.from_key(wallet)
 
         charity_token = web3.eth.contract(abi=abi, bytecode=bytecode)
-        tx_hash = charity_token.constructor(dev_account.address).transact({'from': dev_account.address}).hex()
+        tx_hash = (charity_token.constructor(dev_account.address)
+                   .transact({'from': dev_account.address}).hex())
 
         tx_receipt = web3.eth.wait_for_transaction_receipt(tx_hash)
 
@@ -51,7 +52,8 @@ class MetadataNFTAdmin(admin.ModelAdmin):
 
         url = f"http://0.0.0.0:80/api/v1/{obj.id}/"
 
-        tx_hash = charity_token.functions.safeMint(dev_account.address, obj.id, url).transact({'from': dev_account.address}).hex()
+        tx_hash = (charity_token.functions.safeMint(dev_account.address, obj.id, url)
+                   .transact({'from': dev_account.address}).hex())
 
         web3.eth.wait_for_transaction_receipt(tx_hash)
 
