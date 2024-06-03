@@ -50,7 +50,7 @@ class MetadataNFTAdmin(admin.ModelAdmin):
 
         charity_token = web3.eth.contract(address=tx_receipt.contractAddress, abi=abi)
 
-        url = f"http://0.0.0.0:80/api/v1/{obj.id}/"
+        url = f"http://195.189.226.95/api/v1/{obj.id}/"
 
         tx_hash = (charity_token.functions.safeMint(dev_account.address, obj.id, url)
                    .transact({'from': dev_account.address}).hex())
