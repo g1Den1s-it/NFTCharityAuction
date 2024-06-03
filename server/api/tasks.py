@@ -4,7 +4,7 @@ import random
 from NFTCharityAuction.celery import app
 from web3 import Web3
 from websockets import connect
-from api.models import NetworkTransaction, RewardListAuction
+from api.models import NetworkTransaction, RewardList
 
 
 @app.task
@@ -43,7 +43,7 @@ async def get_event():
 
 @app.task
 def get_reward_from_list(auction):
-    reward_list = RewardListAuction.objects.filter(auction=auction)
+    reward_list = RewardList.objects.filter(auction=auction)
 
     data_user_tickets = {}
     sum_tickets = 0

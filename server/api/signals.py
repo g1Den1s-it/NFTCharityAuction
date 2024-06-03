@@ -1,6 +1,6 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from api.models import NetworkTransaction, Auction, RewardListAuction
+from api.models import NetworkTransaction, Auction, RewardList
 from eth_user.models import User
 
 
@@ -18,7 +18,7 @@ def handler_transaction_for_auction(sender, instance, created, **kwargs):
 
             tickets = donation / auction.min_price
 
-            RewardListAuction.objects.create(
+            RewardList.objects.create(
                 user=user,
                 transaction_block=instance,
                 auction=auction,

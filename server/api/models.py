@@ -42,16 +42,6 @@ class Auction(models.Model):
         return self.name
 
 
-class RewardListAuction(models):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    transaction_block = models.ForeignKey(NetworkTransaction, on_delete=models.CASCADE)
-    auction = models.ForeignKey(Auction, on_delete=models.CASCADE)
-    ticket = models.IntegerField()
-
-    def __str__(self):
-        return self.transaction_block[:7] + "..." + self.transaction_block[-5:]
-
-
 class UserDonationAuctionTransaction(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     auction = models.ForeignKey(Auction, on_delete=models.CASCADE)
